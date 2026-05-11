@@ -78,11 +78,14 @@ def make_api_request_with_retry(access_token, endpoint, max_retries=3):
     for attempt in range(max_retries):
         try:
             response = requests.get(url, headers=headers, timeout=30)
+            logging.info(f"API request to {endpoint} returned status code {response.status_code}")  
 
             if response.status_code >= 500:
-                raise RuntimeError(f"5xx {response.status_code}: {response.text}")
+                logging.error(f"Server error on attempt {attempt+1}: {response.status_code} - {response.text}")
+                # raise RuntimeError(f"5xx {response.status_code}: {response.text}")
 
             if 400 <= response.status_code < 500:
+                logging.error(f"Client error on attempt {attempt+1}: {response.status_code} - {response.text}")
                 return {"status": response.status_code, "text": response.text}, True
 
             return response.json(), False
