@@ -11,9 +11,9 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="fitbittoken")
 def fitbittoken(req: func.HttpRequest) -> func.HttpResponse:
     settings = MySettings()
-    logging.info(f"handling req for url: {req.url}")
+    logging.info(f"handling req for url")
     code = req.params.get("code")
-    logging.info(f"got code: {code}")
+    logging.info(f"got code")
     if code is None:
         return func.HttpResponse(
             status_code=404,
