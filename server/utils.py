@@ -104,7 +104,7 @@ def profile_pull(CurID, access_token):
     endpoint = '1/user/' + CurID + '/profile.json'
     if not access_token:
         logging.error(f"Missing access_token for Fitbit_ID={CurID}")
-        Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nMissing access_token for Fitbit_ID={CurID}'
+        Msg = f'TRY REGISTERING ATHLETE AGAIN.\nMissing access_token for Fitbit_ID={CurID}'
         return Msg
 
     logging.info(f"Fetching profile for Fitbit ID: {CurID} from endpoint: {endpoint}")
@@ -113,7 +113,7 @@ def profile_pull(CurID, access_token):
     
     if fail or not isinstance(profile, dict):
         logging.error(f"Failed to fetch/parse profile for Fitbit ID: {CurID}")
-        Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nFailed to fetch/parse profile for Fitbit ID: {CurID}"
+        Msg = f"TRY REGISTERING ATHLETE AGAIN.\nFailed to fetch/parse profile for Fitbit ID: {CurID}"
         return Msg
 
     if 'errors' in profile.keys():
@@ -123,7 +123,7 @@ def profile_pull(CurID, access_token):
         # Assuming one error right now, but might want to combine all errors if others exist in the future
         if len(ErrorInfo) == 0:
             # Then just say that the Error is Unknown
-            Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
+            Msg = f'TRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
         elif len(ErrorInfo) > 0:
             # then just grab the first error message
             if isinstance(ErrorInfo, list) and len(ErrorInfo) > 0 and 'title' in ErrorInfo[0]:
@@ -135,7 +135,7 @@ def profile_pull(CurID, access_token):
             else:
                 tMsg = 'Unrecognized error format'  
             
-            Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
+            Msg = f"TRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
         return Msg
             
     elif 'error' in profile.keys():
@@ -144,7 +144,7 @@ def profile_pull(CurID, access_token):
         # Assuming one error right now, but might want to combine all errors if others exist in the future
         if len(ErrorInfo) == 0:
             # Then just say that the Error is Unknown
-            Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
+            Msg = f'TRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
         elif len(ErrorInfo) > 0:
             # then just grab the first error message
             if isinstance(ErrorInfo, list) and len(ErrorInfo) > 0 and 'title' in ErrorInfo[0]:
@@ -156,7 +156,7 @@ def profile_pull(CurID, access_token):
             else:
                 tMsg = 'Unrecognized error format'  
             
-            Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
+            Msg = f"TRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
         return Msg
             
     else:
