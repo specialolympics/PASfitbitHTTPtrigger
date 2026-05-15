@@ -41,10 +41,10 @@ def fitbittoken(req: func.HttpRequest) -> func.HttpResponse:
 
     if success:
         logging.info("Successfully upserted token data.")
-        TeamsMSG = "Token data Successfully uploaded. " + Msg
+        TeamsMSG = Msg + "\nToken data Successfully uploaded."
     else:
         logging.error("Failed to upsert token data after retries.")
-        TeamsMSG = "Failed to upload token data. " + Msg
+        TeamsMSG = Msg + "\nFAILURE.\nTRY REGISTERING ATHLETE AGAIN.\n Failed to upload token data."
     
     logging.info("Ready to send teams message.")
     u.send_teams_message_webhook(settings.teams_webhook_url, TeamsMSG)

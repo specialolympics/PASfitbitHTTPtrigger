@@ -104,7 +104,7 @@ def profile_pull(CurID, access_token):
     endpoint = '1/user/' + CurID + '/profile.json'
     if not access_token:
         logging.error(f"Missing access_token for Fitbit_ID={CurID}")
-        Msg = f'Missing access_token for Fitbit_ID={CurID}'
+        Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nMissing access_token for Fitbit_ID={CurID}'
         return Msg
 
     logging.info(f"Fetching profile for Fitbit ID: {CurID} from endpoint: {endpoint}")
@@ -113,7 +113,7 @@ def profile_pull(CurID, access_token):
     
     if fail or not isinstance(profile, dict):
         logging.error(f"Failed to fetch/parse profile for Fitbit ID: {CurID}")
-        Msg = f"Failed to fetch/parse profile for Fitbit ID: {CurID}"
+        Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nFailed to fetch/parse profile for Fitbit ID: {CurID}"
         return Msg
 
     if 'errors' in profile.keys():
@@ -123,7 +123,7 @@ def profile_pull(CurID, access_token):
         # Assuming one error right now, but might want to combine all errors if others exist in the future
         if len(ErrorInfo) == 0:
             # Then just say that the Error is Unknown
-            Msg = f'Unknown error for Fitbit ID: {CurID}'
+            Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
         elif len(ErrorInfo) > 0:
             # then just grab the first error message
             if isinstance(ErrorInfo, list) and len(ErrorInfo) > 0 and 'title' in ErrorInfo[0]:
@@ -135,7 +135,7 @@ def profile_pull(CurID, access_token):
             else:
                 tMsg = 'Unrecognized error format'  
             
-            Msg = f"Profile error for Fitbit ID: {CurID}: {tMsg}"
+            Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
         return Msg
             
     elif 'error' in profile.keys():
@@ -144,7 +144,7 @@ def profile_pull(CurID, access_token):
         # Assuming one error right now, but might want to combine all errors if others exist in the future
         if len(ErrorInfo) == 0:
             # Then just say that the Error is Unknown
-            Msg = f'Unknown error for Fitbit ID: {CurID}'
+            Msg = f'FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nUnknown error for Fitbit ID: {CurID}'
         elif len(ErrorInfo) > 0:
             # then just grab the first error message
             if isinstance(ErrorInfo, list) and len(ErrorInfo) > 0 and 'title' in ErrorInfo[0]:
@@ -156,7 +156,7 @@ def profile_pull(CurID, access_token):
             else:
                 tMsg = 'Unrecognized error format'  
             
-            Msg = f"Profile error for Fitbit ID: {CurID}: {tMsg}"
+            Msg = f"FAILURE.\nTRY REGISTERING ATHLETE AGAIN.\nProfile error for Fitbit ID: {CurID}: {tMsg}"
         return Msg
             
     else:
@@ -164,13 +164,27 @@ def profile_pull(CurID, access_token):
         FirstName = profile.get('user', {}).get('firstName')
         LastName = profile.get('user', {}).get('lastName')
         Msg = f'Successfully connected: First Name: {FirstName}, Last Name: {LastName}, Fitbit ID: {CurID}'
-
     return Msg
 
 
 
 def send_teams_message_webhook(webhook_url, message):
-    payload = {"text": message}
+    # Set default color (black)
+    theme_color = "00FF00"
+
+    # If failure detected → make red
+    if "failure" in message.lower():
+        # Change the color to red for failures
+        theme_color = "FF0000"
+
+    payload = {
+        "@type": "MessageCard",
+        "@context": "http://schema.org/extensions",
+        "themeColor": theme_color,
+        "summary": "Notification",
+        "text": message.replace("\n", "<br>")
+    }
+
     try:
         logging.info(f"Sending message to Teams webhook: {message}")
         response = requests.post(webhook_url, json = payload, timeout = 10)
