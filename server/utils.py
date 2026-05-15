@@ -169,22 +169,34 @@ def profile_pull(CurID, access_token):
 
 
 def send_teams_message_webhook(webhook_url, message):
-    # Set default color (black)
-    theme_color = "00FF00"
-
     # If failure detected → make red
     if "failure" in message.lower():
         # Change the color to red for failures
-        theme_color = "FF0000"
-
-    payload = {
-        "@type": "MessageCard",
-        "@context": "http://schema.org/extensions",
-        "themeColor": theme_color,
-        "summary": "Notification",
-        "text": message.replace("\n", "<br>")
-    }
-
+        payload = {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "themeColor": "#FF0000",
+            "summary": "Fitbit Failure",
+            "sections": [
+                {
+                    "activityTitle": "❌ **FAILURE**",
+                    "text":  message.replace("\n", "<br>")
+                }
+            ]
+        }
+    else:
+        payload = {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "themeColor": "#00FF00",
+            "summary": "Fitbit Connection Success",
+            "sections": [
+                {
+                    "activityTitle": "✅ Successfully connected to Fitbit!",
+                    "text": message.replace("\n", "<br>")
+                }
+            ]
+        }
     try:
         logging.info(f"Sending message to Teams webhook: {message}")
         response = requests.post(webhook_url, json = payload, timeout = 10)
